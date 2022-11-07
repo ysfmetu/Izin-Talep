@@ -1,12 +1,10 @@
 package com.ysf.izin_module.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ysf.izin_module.enums.RoleEnum;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,10 +22,12 @@ public class KullaniciEntity extends BaseEntity {
     @Column(name = "role")
     private RoleEnum roleEnum;
 
-    @OneToOne(mappedBy = "kullaniciEntity")
-    private IzinHakedisEntity izinHakedis;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "kullaniciEntity")
+    @JsonIgnore
+    private List<IzinHakedisEntity> izinHakedis=new ArrayList<>();;
 
-    @OneToMany(mappedBy = "kullaniciEntity")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "kullaniciEntity")
+    @JsonIgnore
     private List<IzinTalepEntity> izinTalepEntity=new ArrayList<>();
 
 

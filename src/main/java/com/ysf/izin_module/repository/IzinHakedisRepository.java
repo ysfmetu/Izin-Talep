@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IzinHakedisRepository extends JpaRepository<IzinHakedisEntity,Long> {
     IzinHakedisEntity findByKullaniciEntity_Username(String username);
+    IzinHakedisEntity findByKullaniciEntity_Id(Long id);
+
 }

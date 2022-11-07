@@ -1,5 +1,6 @@
 package com.ysf.izin_module.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ysf.izin_module.enums.IzinStatusEnum;
 import lombok.Data;
 
@@ -20,8 +21,9 @@ public class IzinTalepEntity extends BaseEntity {
     private IzinStatusEnum durum;
     private int izinGunSayisi;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kullanici_id")
+    @JsonIgnore
     private KullaniciEntity kullaniciEntity;
 
 }

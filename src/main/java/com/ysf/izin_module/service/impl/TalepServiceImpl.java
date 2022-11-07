@@ -1,12 +1,16 @@
 package com.ysf.izin_module.service.impl;
 
+import com.ysf.izin_module.enums.IzinStatusEnum;
+import com.ysf.izin_module.enums.StatusEnum;
 import com.ysf.izin_module.models.dto.TalepDTO;
 import com.ysf.izin_module.models.entity.IzinHakedisEntity;
 import com.ysf.izin_module.models.entity.IzinTalepEntity;
 import com.ysf.izin_module.models.entity.KullaniciEntity;
 import com.ysf.izin_module.repository.IzinHakedisRepository;
+import com.ysf.izin_module.repository.IzinTalepRepository;
 import com.ysf.izin_module.repository.KullaniciRepository;
 import com.ysf.izin_module.service.TalepService;
+import com.ysf.izin_module.utils.Result;
 import javafx.util.converter.LocalDateStringConverter;
 import lombok.AllArgsConstructor;
 import net.bytebuddy.asm.Advice;
@@ -28,6 +32,7 @@ import java.util.stream.Stream;
 public class TalepServiceImpl implements TalepService {
     private final KullaniciRepository kullaniciRepository;
     private final IzinHakedisRepository izinRepo;
+    private final IzinTalepRepository izinTalepRepo;
     @Override
     public int izinGunSayisi(TalepDTO talepDTO) throws ParseException {
         int a=0;
@@ -94,6 +99,32 @@ public class TalepServiceImpl implements TalepService {
         return yearsBetween;
     }
 
+    @Override
+    public Result<IzinTalepEntity> saveIzin(TalepDTO talepDTO) throws ParseException {
+        KullaniciEntity kullaniciEntity=kullaniciRepository.findByUsername(talepDTO.getUsername());
+        IzinTalepEntity izinTalepEntity =new IzinTalepEntity();
+        int talep_edilen_izin=izinGunSayisi(talepDTO);
+        int kontrolCompletedDay=ControlGunSayisi(talep_edilen_izin,talepDTO);
+          if(kontrolCompletedDay>0){
+              izinTalepEntity.setUsername(talepDTO.getUsername());
+              izinTalepEntity.setIzinBaslangicTarihi(talepDTO.getStartDate());
+              izinTalepEntity.setIzinBitisTarihi(talepDTO.getEndDate());
+              izinTalepEntity.setIzinGunSayisi(talep_edilen_izin);
+              izinTalepEntity.setDurum(IzinStatusEnum.beklemede);
+              izinTalepEntity.setKullaniciEntity(kullaniciEntity);
+              IzinTalepEntity savedTalep= izinTalepRepo.save(izinTalepEntity);
+
+              IzinHakedisEntity izinHakedis=izinRepo.findByKullaniciEntity_Id(kullaniciEntity.getId());
+              izinHakedis.setIzinCompleted(kontrolCompletedDay);
+              izinRepo.save(izinHakedis);
+
+        return new Result<>(savedTalep, StatusEnum.success,"İzin talebiniz oluşturulmuştur, yönetici onayı beklemektedir.");
+          }
+          return new Result<>(StatusEnum.failed,"izin talebiniz olumsuzdur.yıllık izin miktarını aştınız...");
+
+
+    }
+
     private static List<LocalDate> BusinessDaysBetween(LocalDate startDate, LocalDate endDate,
                                                        Optional<List<LocalDate>> holidays)
     {
@@ -112,7 +143,19 @@ public class TalepServiceImpl implements TalepService {
         return Stream.iterate(startDate, date -> date.plusDays(1)).limit(daysBetween)
                 .filter(isHoliday.or(isWeekend).negate()).collect(Collectors.toList());
     }
+
+    public int ControlGunSayisi(int talepEdilenGunSayisi,TalepDTO talepDTO){
+        KullaniciEntity kullaniciEntity=kullaniciRepository.findByUsername(talepDTO.getUsername());
+        IzinHakedisEntity izinHakedis=izinRepo.findByKullaniciEntity_Username(kullaniciEntity.getUsername());
+        if((izinHakedis.getIzinCompleted()+talepEdilenGunSayisi)<=izinHakedis.getIzinGunSayisi()){
+            int toplamizingunsayisi=izinHakedis.getIzinCompleted()+talepEdilenGunSayisi;
+            return toplamizingunsayisi;
+        }
+        return 0;
     }
+
+
+}
 
 
 
