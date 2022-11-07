@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,7 @@ public class KullaniciEntity extends BaseEntity {
     private String username;
 
     @Column(name = "baslangic_tarihi")
-    private Date startDate;
+    private LocalDate startDate;
     @Column(name = "role")
     private RoleEnum roleEnum;
 

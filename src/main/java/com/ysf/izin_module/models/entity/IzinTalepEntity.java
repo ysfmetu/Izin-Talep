@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity(name = "izin_talep")
@@ -14,8 +15,8 @@ import java.util.Date;
 public class IzinTalepEntity extends BaseEntity {
 
     private String username;
-    private Date izinBaslangicTarihi;
-    private Date izinBitisTarihi;
+    private LocalDate izinBaslangicTarihi;
+    private LocalDate izinBitisTarihi;
     private IzinStatusEnum durum;
     private int izinGunSayisi;
 
