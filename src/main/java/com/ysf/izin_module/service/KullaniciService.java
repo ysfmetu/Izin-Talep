@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface KullaniciService {
     Result<KullaniciEntity> add(KullaniciDTO kullaniciDTO);
-    Result<List<KullaniciEntity>> getAll();
+    List<KullaniciEntity> getAll();
 }

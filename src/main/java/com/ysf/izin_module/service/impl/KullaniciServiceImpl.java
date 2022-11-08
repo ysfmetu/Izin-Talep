@@ -55,9 +55,9 @@ public class KullaniciServiceImpl implements KullaniciService {
         return new Result<>(StatusEnum.failed,"böyle bir kayda rastlanmamıştır.");
     }
     @Override
-    public Result<List<KullaniciEntity>> getAll() {
+    public List<KullaniciEntity> getAll() {
 
-        return null;
+        return  kullaniciRepository.findAll();
     }
 
 }
