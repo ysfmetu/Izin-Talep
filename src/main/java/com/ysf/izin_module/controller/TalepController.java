@@ -5,9 +5,12 @@ import com.ysf.izin_module.models.entity.IzinTalepEntity;
 import com.ysf.izin_module.service.TalepService;
 import com.ysf.izin_module.utils.Result;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("talep")
@@ -27,5 +30,11 @@ public class TalepController {
     public Result<IzinTalepEntity> addIzin(@RequestBody TalepDTO talepDTO) throws ParseException {
         return talepService.saveIzin(talepDTO);
     }
+    @PostMapping("/update")
+    public Result<IzinTalepEntity> updateIzin(@RequestBody TalepDTO talepDTO) throws ParseException {
+        return talepService.updateTalep(talepDTO);
+    }
+
+
 
 }

@@ -10,4 +10,5 @@ public interface TalepService {
     public int izinGunSayisi(TalepDTO talepDTO) throws ParseException;
     public int ToplamHizmetSuresi(TalepDTO talepDTO);
     public Result<IzinTalepEntity> saveIzin(TalepDTO talepDTO) throws ParseException;
+    public Result<IzinTalepEntity> updateTalep(TalepDTO talepDTO);
 }

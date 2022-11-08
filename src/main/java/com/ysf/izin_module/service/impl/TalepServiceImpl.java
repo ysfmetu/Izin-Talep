@@ -11,16 +11,13 @@ import com.ysf.izin_module.repository.IzinTalepRepository;
 import com.ysf.izin_module.repository.KullaniciRepository;
 import com.ysf.izin_module.service.TalepService;
 import com.ysf.izin_module.utils.Result;
-import javafx.util.converter.LocalDateStringConverter;
 import lombok.AllArgsConstructor;
-import net.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
@@ -123,6 +120,28 @@ public class TalepServiceImpl implements TalepService {
           return new Result<>(StatusEnum.failed,"izin talebiniz olumsuzdur.yıllık izin miktarını aştınız...");
 
 
+    }
+
+    @Override
+    public Result<IzinTalepEntity> updateTalep(TalepDTO talepDTO) {
+       IzinTalepEntity izinTalepEntity= izinTalepRepo.findById(talepDTO.getId()).orElse(null);
+       if (izinTalepEntity!=null){
+           if(talepDTO.getDurum().toString()=="onaylandı"){
+               izinTalepEntity.setDurum(IzinStatusEnum.onaylandı);
+               IzinTalepEntity savedIzinTalep=izinTalepRepo.save(izinTalepEntity);
+               return new Result<>(savedIzinTalep,StatusEnum.success,"izniniz yönetici tarafından onaylanmıştır");
+           }
+           else if (talepDTO.getDurum().toString()=="red"){
+               izinTalepEntity.setDurum(IzinStatusEnum.red);
+               int gunSayisi=izinTalepEntity.getIzinGunSayisi();
+               IzinHakedisEntity izinHakedis=izinRepo.findByKullaniciEntity_Id(izinTalepEntity.getKullaniciEntity().getId());
+               izinHakedis.setIzinCompleted(izinHakedis.getIzinCompleted()-gunSayisi);
+               izinRepo.save(izinHakedis);
+             IzinTalepEntity savedTalep= izinTalepRepo.save(izinTalepEntity);
+             return  new Result<>(savedTalep,StatusEnum.failed,"Talebiniz yönetici tarafından onaylanmamıştır.");
+           }
+       }
+        return new Result<>(StatusEnum.failed, "Böyle bir talep bulunamamıştır.");
     }
 
     private static List<LocalDate> BusinessDaysBetween(LocalDate startDate, LocalDate endDate,
