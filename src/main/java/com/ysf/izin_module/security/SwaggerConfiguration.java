@@ -1,4 +1,4 @@
-package com.ysf.izin_module.config;
+package com.ysf.izin_module.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

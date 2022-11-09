@@ -1,4 +1,4 @@
-package com.ysf.izin_module.controller;
+package com.ysf.izin_module.controllers;
 
 import com.ysf.izin_module.models.dto.TalepDTO;
 import com.ysf.izin_module.models.entity.IzinTalepEntity;
@@ -7,13 +7,10 @@ import com.ysf.izin_module.utils.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.List;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("talep")
@@ -33,12 +30,15 @@ public class TalepController {
     public void numberOfYears(@RequestBody TalepDTO talepDTO) throws ParseException {
         talepService.ToplamHizmetSuresi(talepDTO);
     }
+
     @PostMapping("/kayit")
     @ApiOperation(value = "kullanıcı izin için değerler girdikten sonra kayıt işlemini yapar , onay durumunu <<beklemede>> diye belirler "  )
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public Result<IzinTalepEntity> addIzin(@RequestBody TalepDTO talepDTO) throws ParseException {
         return talepService.saveIzin(talepDTO);
     }
     @PostMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Yönetici rolü ile giriş yapıldıktan sonra izin durum alanını <<onaylandı>> veya <<red>> olarak seçerek izin onaylanmış olur "  )
     public Result<IzinTalepEntity> updateIzin(@RequestBody TalepDTO talepDTO) throws ParseException {
         return talepService.updateTalep(talepDTO);

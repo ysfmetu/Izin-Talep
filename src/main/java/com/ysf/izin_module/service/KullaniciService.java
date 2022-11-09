@@ -7,6 +7,6 @@ import com.ysf.izin_module.utils.Result;
 import java.util.List;
 
 public interface KullaniciService {
-    Result<KullaniciEntity> add(KullaniciDTO kullaniciDTO);
+    Result<KullaniciEntity> add(KullaniciEntity kullaniciEntity);
     List<KullaniciEntity> getAll();
 }

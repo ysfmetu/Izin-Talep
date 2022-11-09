@@ -27,9 +27,9 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @Service
 public class TalepServiceImpl implements TalepService {
-    private final KullaniciRepository kullaniciRepository;
-    private final IzinHakedisRepository izinRepo;
-    private final IzinTalepRepository izinTalepRepo;
+    private  KullaniciRepository kullaniciRepository;
+    private  IzinHakedisRepository izinRepo;
+    private  IzinTalepRepository izinTalepRepo;
     @Override
     public int izinGunSayisi(TalepDTO talepDTO) throws ParseException {
         int a=0;
@@ -133,9 +133,8 @@ public class TalepServiceImpl implements TalepService {
            }
            else if (talepDTO.getDurum().toString()=="red"){
                izinTalepEntity.setDurum(IzinStatusEnum.red);
-               int gunSayisi=izinTalepEntity.getIzinGunSayisi();
                IzinHakedisEntity izinHakedis=izinRepo.findByKullaniciEntity_Id(izinTalepEntity.getKullaniciEntity().getId());
-               izinHakedis.setIzinCompleted(izinHakedis.getIzinCompleted()-gunSayisi);
+               izinHakedis.setIzinCompleted(izinHakedis.getIzinGunSayisi()-izinTalepEntity.getIzinGunSayisi());
                izinRepo.save(izinHakedis);
              IzinTalepEntity savedTalep= izinTalepRepo.save(izinTalepEntity);
              return  new Result<>(savedTalep,StatusEnum.failed,"Talebiniz yönetici tarafından onaylanmamıştır.");
