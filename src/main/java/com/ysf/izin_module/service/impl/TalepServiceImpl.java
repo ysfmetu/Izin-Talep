@@ -39,7 +39,7 @@ public class TalepServiceImpl implements TalepService {
 
         // test için tatil günleri ekliyoruz
         List<LocalDate> holidays = new ArrayList<>();
-        holidays.add(LocalDate.of(2022, 11, 15));
+        holidays.add(LocalDate.of(2022, 11, 10));
         holidays.add(LocalDate.of(2022, 11, 18));
 
         for (LocalDate x : BusinessDaysBetween(today, lastDay, Optional.of(holidays)))
@@ -165,6 +165,7 @@ public class TalepServiceImpl implements TalepService {
     public int ControlGunSayisi(int talepEdilenGunSayisi,TalepDTO talepDTO){
         KullaniciEntity kullaniciEntity=kullaniciRepository.findByUsername(talepDTO.getUsername());
         IzinHakedisEntity izinHakedis=izinRepo.findByKullaniciEntity_Username(kullaniciEntity.getUsername());
+        ToplamHizmetSuresi(talepDTO);
         if((izinHakedis.getIzinCompleted()+talepEdilenGunSayisi)<=izinHakedis.getIzinGunSayisi()){
             int toplamizingunsayisi=izinHakedis.getIzinCompleted()+talepEdilenGunSayisi;
             return toplamizingunsayisi;

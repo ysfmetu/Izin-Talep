@@ -45,7 +45,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
 
         return new ApiInfoBuilder()
                 .title("İzin-Talep API Dökümantasyon")
-                .description("Kullanıcı kayıt,güvenli login işlemleri,yetki bazlı kullanım ile birlikte izin talep formu oluşturma ve onaylanma işlemleri")
+                .description("Kullanıcı kimlik doğrulama ve yetki bazlı kullanım ile birlikte izin talep formu oluşturma ve onaylanma işlemleri")
                 .version("1.0.0")
                 .build();
     }

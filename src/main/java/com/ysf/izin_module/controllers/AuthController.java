@@ -12,6 +12,8 @@ import com.ysf.izin_module.repository.RoleRepository;
 import com.ysf.izin_module.security.jwt.JwtUtils;
 import com.ysf.izin_module.security.services.UserDetailsImpl;
 import com.ysf.izin_module.service.KullaniciService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@Api(value = "Auhentication API", description = "Kullanıcı kayıt oluşturma , kimlik doğrulama,JWT token oluşturma")
 public class AuthController {
 
     private  AuthenticationManager authenticationManager;
@@ -47,6 +50,7 @@ public class AuthController {
     private  JwtUtils jwtUtils;
 
     @PostMapping("/signup")
+    @ApiOperation(value = "Kullanıcı kaydetme işlemi yapar"  )
     public ResponseEntity<?> registerUser( @RequestBody KullaniciDTO signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
@@ -54,13 +58,11 @@ public class AuthController {
                     .body(new MessageResponse("Böyle bir kullanıcı mevcuttur.kullanıcı adını değiştiriniz.!"));
         }
 
-
         // Yeni kullanıcıyı kaydetme kısmı
         KullaniciEntity user = new KullaniciEntity();
         user.setStartDate(signUpRequest.getBaslangicDate());
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
-
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -95,10 +97,11 @@ public class AuthController {
         user.setRoles(roles);
         kullaniciService.add(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Kullanıcı Başarılı bir şekilde kayıt edilmiştir...!"));
     }
 
     @PostMapping("/signin")
+    @ApiOperation(value = "kimlik doğrulama,Güvenli giriş ve JWT token oluşturur."  )
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
